@@ -2,27 +2,7 @@
 // Author  : LoadingTunes
 // Version : 1.0.0
 // License : MIT
-//
-// PURPOSE
-//   Writes the current in-game hour and temporal storm state to a plain-text
-//   file every 2 seconds so external programs can read it without touching
-//   the game process directly.
-//
-// OUTPUT FILE
-//   <VintagestoryData>/gametime.txt  (cross-platform via GamePaths.DataPath)
-//   Format: "<hour>,<storm>"
-//   Examples:
-//     "14.3812,0"   2:22 PM in-game, no storm
-//     "6.0500,1"    just after 6 AM in-game, temporal storm active
-//
-// INSTALL
-//   Drop gametimefx.zip into:
-//   %APPDATA%\VintagestoryData\Mods\
-//   Vintage Story compiles and loads it automatically on next launch.
-//
-// COMPATIBILITY
-//   Tested on VS 1.22. Storm detection uses reflection so it degrades
-//   gracefully on older versions that lack InTemporalStorm.
+
 
 using System;
 using System.IO;
@@ -43,9 +23,16 @@ namespace GameTimeFX
     {
         private string _outputPath;
 
+
+
+
+
         // Tell VS this only runs on the client, not the server - like checking getSide() in Forge
         public override bool ShouldLoad(EnumAppSide side) =>
             side == EnumAppSide.Client;
+
+
+
 
         // Same as onEnable() - runs once when the mod loads
         public override void StartClientSide(ICoreClientAPI api)
@@ -58,6 +45,8 @@ namespace GameTimeFX
             {
                 try
                 {
+
+                    
                     // TotalHours keeps counting up forever, % 24 wraps it back to 0-24
                     double hour  = api.World.Calendar.TotalHours % 24.0;
                     int    storm = 0;
@@ -72,6 +61,10 @@ namespace GameTimeFX
                             storm = (bool)prop.GetValue(api.World.Calendar) ? 1 : 0;
                     }
                     catch { }
+
+
+
+
 
                     // Overwrite the file every tick - this is what the LED script reads
                     File.WriteAllText(_outputPath, $"{hour:F4},{storm}");
