@@ -1,0 +1,11 @@
+{
+  "type": "code",
+  "modid": "gametimefx",
+  "name": "GameTimeFX",
+  "version": "1.0.0",
+  "description": "Writes in-game hour and temporal storm status to a plain-text file every 2 seconds. Lets any external program (scripts, overlays, LED controllers, stream tools) read Vintage Story time of day without touching the game process. Client-side only.",
+  "authors": [ "LoadingTunes" ],
+  "side": "client",
+  "requiredOnClient": true,
+  "requiredOnServer": false
+}
