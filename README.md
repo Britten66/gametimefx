@@ -4,13 +4,18 @@ This is a Vintage Story client mod. Writes in-game time and temporal storm state
 
 ## Output
 
-File: `<VintagestoryData>/gametime.txt`
+Writes a single line to `gametime.txt` every 2 seconds:
 
 ```
 14.3812,0
 ```
 
-First value is the in-game hour (0.0 to 24.0). Second value is the storm flag (0 = clear, 1 = temporal storm active).
+The first number is the in-game hour on a 0.0 to 24.0 scale. The second number is the storm flag. 0 means no storm, 1 means a temporal storm is active.
+
+**File location:**
+- Windows: `%APPDATA%\VintagestoryData\gametime.txt`
+- Mac: `~/Library/Application Support/VintagestoryData/gametime.txt`
+- Linux: `~/.config/VintagestoryData/gametime.txt`
 
 ## Use cases
 
