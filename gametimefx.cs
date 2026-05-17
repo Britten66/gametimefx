@@ -1,4 +1,4 @@
-// GameTimeFX — Vintage Story client-side source mod
+// GameTimeFX - Vintage Story client-side source mod
 // Author  : LoadingTunes
 // Version : 1.0.0
 // License : MIT
@@ -12,17 +12,17 @@
 //   <VintagestoryData>/gametime.txt  (cross-platform via GamePaths.DataPath)
 //   Format: "<hour>,<storm>"
 //   Examples:
-//     "14.3812,0"   — 2:22 PM in-game, no storm
-//     "6.0500,1"    — just after 6 AM in-game, temporal storm active
+//     "14.3812,0"   2:22 PM in-game, no storm
+//     "6.0500,1"    just after 6 AM in-game, temporal storm active
 //
 // INSTALL
-//   Drop gametimebridge.zip into:
+//   Drop gametimefx.zip into:
 //   %APPDATA%\VintagestoryData\Mods\
 //   Vintage Story compiles and loads it automatically on next launch.
 //
 // COMPATIBILITY
-//   Built and tested on VS 1.22. Storm detection uses reflection so it
-//   degrades gracefully on older versions that lack InTemporalStorm.
+//   Tested on VS 1.22. Storm detection uses reflection so it degrades
+//   gracefully on older versions that lack InTemporalStorm.
 
 using System;
 using System.IO;
@@ -38,29 +38,32 @@ using Vintagestory.API.Common;
 
 namespace GameTimeFX
 {
+    // Same idea as a Bukkit plugin class - VS finds this because it extends ModSystem
     public class Core : ModSystem
     {
         private string _outputPath;
 
-        // Client-side only — no server logic needed
+        // Tell VS this only runs on the client, not the server - like checking getSide() in Forge
         public override bool ShouldLoad(EnumAppSide side) =>
             side == EnumAppSide.Client;
 
+        // Same as onEnable() - runs once when the mod loads
         public override void StartClientSide(ICoreClientAPI api)
         {
-            // GamePaths.DataPath resolves correctly on Windows, Mac, and Linux
+            // Resolves to the right data folder on Windows, Mac, and Linux
             _outputPath = Path.Combine(GamePaths.DataPath, "gametime.txt");
 
-            // Tick every 2000ms — fast enough for smooth LED response, light enough to be invisible
+            // Same as a Bukkit repeating scheduler - runs every 2000ms
             api.Event.RegisterGameTickListener(_ =>
             {
                 try
                 {
+                    // TotalHours keeps counting up forever, % 24 wraps it back to 0-24
                     double hour  = api.World.Calendar.TotalHours % 24.0;
                     int    storm = 0;
 
-                    // InTemporalStorm was added in a later VS version; use reflection so
-                    // the mod still loads on older builds without a compile error
+                    // InTemporalStorm doesn't exist in older VS versions
+                    // Reflection lets us check at runtime before calling it - same as Class.getMethod() in Java
                     try
                     {
                         PropertyInfo prop = api.World.Calendar.GetType()
@@ -70,12 +73,14 @@ namespace GameTimeFX
                     }
                     catch { }
 
+                    // Overwrite the file every tick - this is what the LED script reads
                     File.WriteAllText(_outputPath, $"{hour:F4},{storm}");
                 }
                 catch { }
             }, 2000);
         }
 
+        // Same as onDisable() - nothing to clean up so it stays empty
         public override void Dispose() { }
     }
 }
