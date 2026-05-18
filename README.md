@@ -50,6 +50,4 @@ https://mods.vintagestory.at/show/mod/51182
 
 MIT
 
-## Author
 
-LoadingTunes
