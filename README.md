@@ -1,6 +1,6 @@
 # GameTimeFX
 
-This is a Vintage Story client mod. Writes in-game time and temporal storm state to a plain-text file every 2 seconds so external tools can read it.
+This is a client mod used currently for Vintage Story. Writes in-game time and temporal storm state to a plain-text file every 2 seconds so external tools can read it.
 
 ## Output
 
