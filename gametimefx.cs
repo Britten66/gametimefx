@@ -1,8 +1,7 @@
 // GameTimeFX - Vintage Story client-side source mod
 // Author  : LoadingTunes
-// Version : 1.0.0
+// Version : 1.0.1
 // License : MIT
-
 
 using System;
 using System.IO;
@@ -11,7 +10,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 
 [assembly: ModInfo("GameTimeFX", "gametimefx",
-    Version     = "1.0.0",
+    Version     = "1.0.1",
     Description = "Writes in-game time and temporal storm status to a file for external tools.",
     Authors     = new[] { "LoadingTunes" }
 )]
@@ -23,30 +22,22 @@ namespace GameTimeFX
     {
         private string _outputPath;
 
-
-
-
-
         // Tell VS this only runs on the client, not the server - like checking getSide() in Forge
         public override bool ShouldLoad(EnumAppSide side) =>
             side == EnumAppSide.Client;
 
-
-
-
         // Same as onEnable() - runs once when the mod loads
         public override void StartClientSide(ICoreClientAPI api)
         {
-            // Resolves to the right data folder on Windows, Mac, and Linux
-            _outputPath = Path.Combine(GamePaths.DataPath, "gametime.txt");
+            // AppData path works on all Windows VS installs
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            _outputPath = Path.Combine(appData, "VintagestoryData", "gametime.txt");
 
             // Same as a Bukkit repeating scheduler - runs every 2000ms
             api.Event.RegisterGameTickListener(_ =>
             {
                 try
                 {
-
-                    
                     // TotalHours keeps counting up forever, % 24 wraps it back to 0-24
                     double hour  = api.World.Calendar.TotalHours % 24.0;
                     int    storm = 0;
@@ -61,10 +52,6 @@ namespace GameTimeFX
                             storm = (bool)prop.GetValue(api.World.Calendar) ? 1 : 0;
                     }
                     catch { }
-
-
-
-
 
                     // Overwrite the file every tick - this is what the LED script reads
                     File.WriteAllText(_outputPath, $"{hour:F4},{storm}");
